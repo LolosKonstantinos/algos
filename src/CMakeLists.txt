@@ -1,0 +1,8 @@
+add_subdirectory(binary-trees)
+add_subdirectory(hash-table)
+add_subdirectory(linked-lists)
+add_subdirectory(memory-pool)
+add_subdirectory(queue)
+add_subdirectory(stack)
+add_subdirectory(utilities)
+add_subdirectory(vector)
