@@ -11,14 +11,16 @@ struct tree_priv_t {
     void *root;
     size_t node_size;
     size_t node_count;
+    uint32_t height;
     cmp_f cmp;          // the function based on which we do struct comparison
 };
 
 struct tree_node_t {
     void *data;
-    unsigned char height;
     tree_node_t *left;
     tree_node_t *right;
+    unsigned char height;
+    char zero[7];
 };
 
 int new_tree(tree_t t, tree_attr_t attr){}
@@ -35,21 +37,64 @@ tree_node_t *new_node() {
 /*________________________________________AVL TREE FUNCTIONS________________________________________*/
 int avl_insert(tree_t* t, void* data) {
     tree_priv_t *priv;
-    tree_node_t *node;
+    tree_node_t *node, *temp, *stack = NULL, *top;
+    int cmp_res;
 
     if (!t) return -1;
+    if (!(t->priv)) return -1;
+    priv = t->priv;
 
     node = new_node();
     if (!node) {
         return 1;
     }
-    node->data = data;
-    priv = t->priv;
+
+    stack = malloc(sizeof(tree_node_t *) * priv->height);
+    if (!stack) {
+        free(node);
+        return 1;
+    }
+    top = stack;
+
+    if (!priv->root) {
+        priv->root = node;
+        return 0;
+    }
+
+    temp = priv->root;
 
     while (1) {
-        //todo here lies the logit to insertg
-        break;
+        cmp_res = priv->cmp(data, temp->data);
+        if (cmp_res == 0) {
+            //if the node already exists we do not re-insert it
+            free(node);
+            return 0;
+        }
+
+        //add the current node to the stack, so that after the insertion we have the stack trace of the new node
+        top = node;
+        ++top;
+
+        if (cmp_res > 0) {
+            if (temp->right == NULL) {
+                temp->right = node;
+                break;
+            }
+            temp = temp->right;
+        }
+        else {
+            if (temp->left == NULL) {
+                temp->left = node;
+                break;
+            }
+            temp = temp->left;
+        }
     }
+    //check the stack trace and check if we need to rotate
+    while (top != stack) {
+
+    }
+    node->data = data; //copy the data at the end so that we are sure there is no duplicate
     return 0;
 }
 
