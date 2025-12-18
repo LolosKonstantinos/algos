@@ -5,6 +5,9 @@
 #ifndef BINARY_TREES_H
 #define BINARY_TREES_H
 
+#define TREE_RIGHT 1
+#define TREE_LEFT 0
+
 typedef int(*cmp_f)(void *, void *);
 
 typedef struct tree_priv_t tree_priv_t;
@@ -38,11 +41,10 @@ int avl_delete(tree_t t, void* data);
 int avl_search(tree_t t, void* data);
 
 /*AVL HELPERS*/
-
-void rotate_left(tree_t t, tree_node_t);
-void rotate_right(tree_t t, tree_node_t);
-void rotate_left_right(tree_t t, tree_node_t);
-void rotate_right_left(tree_t t, tree_node_t);
-void rotate_left_left(tree_t t, tree_node_t);
-void rotate_right_right(tree_t t, tree_node_t);
+tree_node_t *avl_is_balanced(tree_node_t *stack, tree_node_t *top);
+void avl_balance(tree_node_t *node, tree_node_t *stack, tree_node_t *top);
+void rotate_left(tree_node_t* node, tree_node_t* root);
+void rotate_right(tree_node_t *node, tree_node_t* root);
+void rotate_left_right(tree_node_t *node, tree_node_t* root);
+void rotate_right_left(tree_node_t *node, tree_node_t* root);
 #endif //BINARY_TREES_H
