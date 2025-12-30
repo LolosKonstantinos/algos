@@ -34,17 +34,12 @@ void free_tree(tree_t t);
 tree_node_t *new_node();
 /*________________________________________AVL TREE FUNCTIONS________________________________________*/
 int avl_insert(tree_t* t, void* data);
-int avl_insert_copy(tree_t t, void* data);
+int avl_insert_copy(tree_t *t, void* data);
 
-int avl_delete(tree_t t, void* data);
+int avl_delete(tree_t *t, void* data);
 
-int avl_search(tree_t t, void* data);
+int avl_search(tree_t *t, void* data);
 
 /*AVL HELPERS*/
-tree_node_t *avl_is_balanced(tree_node_t *stack, tree_node_t *top);
-void avl_balance(tree_node_t *node, tree_node_t *stack, tree_node_t *top);
-void rotate_left(tree_node_t* node, tree_node_t* root);
-void rotate_right(tree_node_t *node, tree_node_t* root);
-void rotate_left_right(tree_node_t *node, tree_node_t* root);
-void rotate_right_left(tree_node_t *node, tree_node_t* root);
+void avl_balance(tree_node_t** stack, tree_node_t** top, tree_priv_t* tree);
 #endif //BINARY_TREES_H
