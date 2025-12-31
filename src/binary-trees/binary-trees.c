@@ -206,10 +206,9 @@ int avl_delete(tree_t *t, void* data) {
     }
     else if (node->left && node->right) {
         //if it has both children
-        //todo find the largest in the left sub tree OR the smallest in the right subtree
-        //todo and swap its place with the node to be deleted (or just delete and replace)
 
         //we favor the tallest subtree, so that the resulting tree is more balanced
+        temp_prev = node;
         if (node->left->height > node->right->height) {
             temp = node->left;
             temp_direction = TREE_LEFT;
