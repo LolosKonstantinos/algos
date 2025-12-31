@@ -171,6 +171,95 @@ int avl_insert_copy(tree_t *t, void* data) {
 
 int avl_delete(tree_t *t, void* data) {
     //todo need to study to implement
+    tree_node_t *node, *prev = NULL, *temp, *temp_prev;
+    char direction = -1, temp_direction = -1;
+    int cmp_res;
+    cmp_f cmp;
+
+    if (!t || !data) return -1;
+    node = t->priv->root;
+    cmp = t->priv->cmp;
+
+    while (node != NULL) {
+        prev = node;
+        cmp_res = cmp(data, node->data);
+        if (cmp_res == 0) break;
+
+        if (cmp_res < 0) {
+            node = node->left;
+            direction = TREE_LEFT;
+        }
+        else {
+            node = node->right;
+            direction = TREE_RIGHT;
+        }
+    }
+    if (!node || !prev) return 1; //prev is always not null, just clang-tidy cries again
+
+    if (!(node->left || node->right)) {
+        //if it has no children
+        free(node->data);
+        free(node);
+        if (direction == TREE_LEFT) prev->left = NULL;
+        else if (direction == TREE_RIGHT) prev->right = NULL;
+        else t->priv->root = NULL;
+    }
+    else if (node->left && node->right) {
+        //if it has both children
+        //todo find the largest in the left sub tree OR the smallest in the right subtree
+        //todo and swap its place with the node to be deleted (or just delete and replace)
+
+        //we favor the tallest subtree, so that the resulting tree is more balanced
+        if (node->left->height > node->right->height) {
+            temp = node->left;
+            temp_direction = TREE_LEFT;
+            while (temp->right) {
+                temp_prev = temp;
+                temp = temp->right;
+            }
+        }
+        else {
+            temp = node->right;
+            temp_direction = TREE_RIGHT;
+            while (temp->left) {
+                temp_prev = temp;
+                temp = temp->left;
+            }
+        }
+
+        if (temp != node->left || temp != node->right) {
+            if (temp_direction == TREE_LEFT) {
+                if (temp->left) temp_prev->right = temp->left;
+                else temp_prev->right = NULL;
+            }
+            else {
+                if (temp->right) temp_prev->left = temp->right;
+                else temp_prev->left = NULL;
+            }
+            temp->left = NULL;
+            temp->right = NULL;
+        }
+
+        if (direction == TREE_LEFT) prev->left = temp;
+        else if (direction == TREE_RIGHT) prev->right = temp;
+        else t->priv->root = temp;
+
+        if (!temp->right) temp->right = node->right;
+        if (!temp->left) temp->left = node->left;
+
+    }
+
+    else {
+        //if it has only one child
+        if (node->left) temp = node->left;
+        else temp = node->right;
+
+        free(node->data);
+        free(node);
+        if (direction == TREE_LEFT) prev->left = temp;
+        else if (direction == TREE_RIGHT) prev->right = temp;
+        else t->priv->root = temp;
+    }
     return 0;
 }
 
